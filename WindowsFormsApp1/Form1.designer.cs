@@ -66,6 +66,13 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.cboFranjaHoraria.BackColor = System.Drawing.Color.LightCoral;
             this.cboFranjaHoraria.FormattingEnabled = true;
+            this.cboFranjaHoraria.Items.AddRange(new object[] {
+            "Mañana",
+            "Tarde",
+            "Noche",
+            "Mañana y tarde",
+            "Mañana y noche",
+            "Tarde y noche"});
             this.cboFranjaHoraria.Location = new System.Drawing.Point(11, 590);
             this.cboFranjaHoraria.Name = "cboFranjaHoraria";
             this.cboFranjaHoraria.Size = new System.Drawing.Size(161, 21);
@@ -80,7 +87,7 @@
             this.lstMaterias.FormattingEnabled = true;
             this.lstMaterias.Location = new System.Drawing.Point(503, 12);
             this.lstMaterias.Name = "lstMaterias";
-            this.lstMaterias.Size = new System.Drawing.Size(968, 277);
+            this.lstMaterias.Size = new System.Drawing.Size(847, 277);
             this.lstMaterias.TabIndex = 7;
             // 
             // txtCantidadVacantes
@@ -163,7 +170,7 @@
             this.lstCombinaciones.FormattingEnabled = true;
             this.lstCombinaciones.Location = new System.Drawing.Point(306, 308);
             this.lstCombinaciones.Name = "lstCombinaciones";
-            this.lstCombinaciones.Size = new System.Drawing.Size(1165, 303);
+            this.lstCombinaciones.Size = new System.Drawing.Size(1044, 303);
             this.lstCombinaciones.TabIndex = 8;
             // 
             // btnCargarMateria
@@ -209,7 +216,7 @@
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(1491, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(1370, 0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -268,7 +275,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
-            this.ClientSize = new System.Drawing.Size(1491, 662);
+            this.ClientSize = new System.Drawing.Size(1370, 662);
             this.Controls.Add(this.btnexcel);
             this.Controls.Add(this.btnLimpiartodo);
             this.Controls.Add(this.btnLimpiar);
@@ -298,6 +305,7 @@
         #endregion
         private System.Windows.Forms.TextBox txtObservacionPreferencia;
         private System.Windows.Forms.ComboBox cboFranjaHoraria;
+        private System.Windows.Forms.ListBox lstMaterias;
         private System.Windows.Forms.TextBox txtCantidadVacantes;
         private System.Windows.Forms.TextBox txtObservaciones;
         private System.Windows.Forms.TextBox txtComision;
@@ -313,7 +321,6 @@
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnLimpiartodo;
         private System.Windows.Forms.Button btnexcel;
-        public System.Windows.Forms.ListBox lstMaterias;
     }
 }
 
