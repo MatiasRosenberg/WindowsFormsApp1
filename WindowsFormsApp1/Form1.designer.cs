@@ -298,7 +298,6 @@
         #endregion
         private System.Windows.Forms.TextBox txtObservacionPreferencia;
         private System.Windows.Forms.ComboBox cboFranjaHoraria;
-        private System.Windows.Forms.ListBox lstMaterias;
         private System.Windows.Forms.TextBox txtCantidadVacantes;
         private System.Windows.Forms.TextBox txtObservaciones;
         private System.Windows.Forms.TextBox txtComision;
@@ -314,6 +313,7 @@
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnLimpiartodo;
         private System.Windows.Forms.Button btnexcel;
+        public System.Windows.Forms.ListBox lstMaterias;
     }
 }
 

@@ -1,14 +1,17 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Excel = Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace WindowsFormsApp1
 
@@ -117,9 +120,6 @@ namespace WindowsFormsApp1
             materias.Add(materia);
 
             lstMaterias.Items.Add(materia);
-            
-
-
         }
 
         private void btnGenerarCombinaciones_Click(object sender, EventArgs e)
@@ -232,82 +232,48 @@ namespace WindowsFormsApp1
                 {
                     string selectedFileName = openFileDialog.FileName;
 
-                    // Llamar al método para importar los datos y mostrarlos en el ListBox.
-                    ImportExcelDataToListBox(selectedFileName);
+                    materias = ImportarDesdeExcel(selectedFileName);
+
+                    foreach (var materia in materias)
+                    {
+                        lstMaterias.Items.Add(materia);
+                    }
                 }
             }
         }
 
-        private void ImportExcelDataToListBox(string filePath)
+        public static List<Materia> ImportarDesdeExcel(string rutaArchivo)
         {
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook workbook = null;
-            Excel.Worksheet worksheet = null;
+            // Establecer el contexto de licencia
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Solo para uso no comercial, consulta la página de EPPlus para otros contextos de licencia
 
-            try
+            List<Materia> materias = new List<Materia>();
+
+            using (var package = new ExcelPackage(new FileInfo(rutaArchivo)))
             {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                Encoding utf8Encoding = Encoding.GetEncoding("UTF-8");
+                var worksheet = package.Workbook.Worksheets[0]; // Suponemos que los datos están en la primera hoja (índice 0)
 
-                workbook = excelApp.Workbooks.Open(filePath);
-                worksheet = workbook.Sheets[1]; // Asumimos que los datos están en la primera hoja.
+                // Suponemos que los datos comienzan en la fila 2 (la fila 1 contiene encabezados)
+                int fila = 3;
 
-                int rowCount = worksheet.UsedRange.Rows.Count;
-                int columnCount = worksheet.UsedRange.Columns.Count;
-
-                lstMaterias.Items.Clear();
-
-                // Lista para almacenar las instancias de Materia.
-                List<Materia> materiasList = new List<Materia>();
-
-                // Iterar a través de las filas y crear una instancia de Materia para cada una.
-                for (int i = 2; i <= rowCount; i++) // Comenzamos desde la fila 2 para omitir la cabecera.
+                while (worksheet.Cells[fila, 1].Value != null) // Leemos hasta que la columna "Nombre" esté vacía
                 {
-                    // Utilizamos el método GetString para leer los datos con la codificación correcta (UTF-8).
-                    string nombre = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 0].Value)));
-                    int comision = Convert.ToInt32(worksheet.Cells[i, 1].Value);
-                    string dia = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 2].Value)));
-                    string horario = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 3].Value)));
-                    string profesor = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 4].Value)));
-                    string observaciones = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 5].Value)));
-                    int cantidadVacantes = Convert.ToInt32(worksheet.Cells[i, 6].Value);
+                    string nombre = worksheet.Cells[fila, 1].Value.ToString();
+                    int comision = Convert.ToInt32(worksheet.Cells[fila, 2].Value);
+                    string dia = worksheet.Cells[fila, 3].Value.ToString();
+                    string horario = worksheet.Cells[fila, 4].Value.ToString();
+                    string profesor = worksheet.Cells[fila, 5].Value.ToString();
+                    int cantidadVacantes = Convert.ToInt32(worksheet.Cells[fila, 6].Value);
+                    string observaciones = worksheet.Cells[fila, 7].Value.ToString();
 
-                    Materia materia = new Materia(nombre, comision, dia, horario, profesor, observaciones, cantidadVacantes);
-                    materiasList.Add(materia);
-                }
+                    // Crea un nuevo objeto Materia y agrégalo a la lista
+                    materias.Add(new Materia(nombre, comision, dia, horario, profesor, observaciones, cantidadVacantes));
 
-                // Agregar las instancias de Materia al ListBox.
-                foreach (Materia materia in materiasList)
-                {
-                    lstMaterias.Items.Add(materia);
+                    fila++;
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al importar los datos de Excel: " + ex.Message);
-            }
-            finally
-            {
-                // Cerrar y liberar los recursos.
-                workbook?.Close();
-                excelApp?.Quit();
 
-                if (worksheet != null)
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(worksheet);
-
-                if (workbook != null)
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
-
-                if (excelApp != null)
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
-
-                worksheet = null;
-                workbook = null;
-                excelApp = null;
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
+            return materias;
         }
     }
 
