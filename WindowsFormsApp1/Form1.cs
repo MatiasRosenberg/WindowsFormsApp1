@@ -62,19 +62,6 @@ namespace WindowsFormsApp1
             GenerarCombinacionesRecursivas(nuevasMateriasDisponibles, nuevaCombinacion, combinaciones);
         }
 
-        private bool CumpleFranjaHoraria(List<Materia> combinacion, string franjaHoraria)
-        {
-            foreach (var materia in combinacion)
-            {
-                if (!materia.Horario.Equals(franjaHoraria))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         private bool CumpleObservacion(List<Materia> combinacion, string observacionPreferencia)
         {
             foreach (var materia in combinacion)
@@ -93,7 +80,8 @@ namespace WindowsFormsApp1
             txtNombre.Clear();
             txtComision.Clear();
             txtDia.Clear();
-            txtHorario.Clear();
+            dateTimePickerHrInicio.Value=DateTime.Now;
+            dateTimePickerHrFin.Value = DateTime.Now;
             txtProfesor.Clear();
             txtObservaciones.Clear();
             txtCantidadVacantes.Clear();
@@ -104,7 +92,8 @@ namespace WindowsFormsApp1
             string nombre = txtNombre.Text;
             int comision = Convert.ToInt32(txtComision.Text);
             string dia = txtDia.Text;
-            string horario = txtHorario.Text;
+            DateTime horarioInicio = dateTimePickerHrInicio.Value;
+            DateTime horarioFin = dateTimePickerHrFin.Value;
             string profesor = txtProfesor.Text;
             string observaciones = txtObservaciones.Text;
             int cantidadVacantes = Convert.ToInt32(txtCantidadVacantes.Text);
@@ -112,10 +101,13 @@ namespace WindowsFormsApp1
 
 
             // Crear una instancia de Materia y asignar el valor de preferencia de observación
-            Materia materia = new Materia(nombre, comision, dia, horario, profesor, observaciones, cantidadVacantes)
+            Materia materia = new Materia(nombre, comision, dia, horarioInicio, horarioFin, profesor, observaciones, cantidadVacantes)
             {
                 PreferenciaObservacion = txtObservacionPreferencia.Text
             };
+            // Asignar la hora de fin de la materia (hora seleccionada en el dateTimePickerHrFin)
+            materia.HorarioInicio = horarioInicio;
+            materia.HorarioFin = horarioFin;
 
             materias.Add(materia);
 
@@ -124,6 +116,24 @@ namespace WindowsFormsApp1
 
         private void btnGenerarCombinaciones_Click(object sender, EventArgs e)
         {
+            // Obtener la franja horaria seleccionada del ComboBox
+            string franjaSeleccionada = cboFranjaHoraria.SelectedItem.ToString();
+
+            // Filtrar las materias por la franja horaria seleccionada
+            List<Materia> materiasFiltradas = FiltrarMateriasPorFranjaHoraria(franjaSeleccionada);
+
+            // Aquí puedes realizar cualquier otra acción con las materias filtradas,
+            // como generar las combinaciones o actualizar la lista de materias mostradas.
+
+            // Por ejemplo, si deseas generar las combinaciones, puedes llamar a la función correspondiente:
+            List<List<Materia>> combinaciones = GenerarCombinaciones(materiasFiltradas);
+
+            // Luego, puedes mostrar las combinaciones en el ListBox o en cualquier otro control
+            lstCombinaciones.Items.Clear();
+            foreach (var combinacion in combinaciones)
+            {
+                lstCombinaciones.Items.Add(string.Join(", ", combinacion.Select(m => m.Nombre)));
+            }
             combinaciones = GenerarCombinaciones(materias);
 
             lstCombinaciones.Items.Clear();
@@ -131,6 +141,7 @@ namespace WindowsFormsApp1
             {
                 lstCombinaciones.Items.Add(string.Join(", ", combinacion));
             }
+
 
         }
 
@@ -152,17 +163,17 @@ namespace WindowsFormsApp1
         }
         private void btnFiltrar_Click(object sender, EventArgs e)
         {
-            string franjaHoraria = cboFranjaHoraria.Text;
+
             string observacionPreferencia = txtObservacionPreferencia.Text;
 
             lstCombinaciones.Items.Clear();
             foreach (var combinacion in combinaciones)
                 foreach (Materia materia in materias)
                 {
-                    bool cumpleFranjaHoraria = CumpleFranjaHoraria(combinacion, franjaHoraria);
+                    
                     bool cumpleObservacion = CumpleObservacion(combinacion, observacionPreferencia);
 
-                    if (cumpleFranjaHoraria && cumpleObservacion)
+                    if (cumpleObservacion)
                     {
                         lstCombinaciones.Items.Add(string.Join(", ", combinacion));
                     }
@@ -170,6 +181,57 @@ namespace WindowsFormsApp1
 
         }
 
+        private List<Materia> FiltrarMateriasPorFranjaHoraria(string franjaSeleccionada)
+        {
+            // Obtener el rango de horas según la franja horaria seleccionada
+            DateTime inicioFranja;
+            DateTime finFranja;
+
+            switch (franjaSeleccionada)
+            {
+                case "Mañana":
+                    inicioFranja = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 6, 0, 0);
+                    finFranja = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 0, 0);
+                    break;
+
+                case "Tarde":
+                    inicioFranja = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 1, 0);
+                    finFranja = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 19, 30, 0);
+                    break;
+
+                case "Noche":
+                    inicioFranja = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 19, 31, 0);
+                    finFranja = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 0);
+                    break;
+
+                default:
+                    return materias; // Si no se selecciona una opción válida, retornar todas las materias sin filtrar
+            }
+
+            // Obtener la fecha y hora seleccionada en los DateTimePickers
+            DateTime horaInicioSeleccionada = dateTimePickerHrInicio.Value;
+            DateTime horaFinSeleccionada = dateTimePickerHrFin.Value;
+
+            // Filtrar las materias según el rango de horas seleccionado
+            List<Materia> materiasFiltradas = materias.Where(m =>
+                m.HorarioInicio >= horaInicioSeleccionada &&
+                m.HorarioFin <= horaFinSeleccionada
+            ).ToList();
+
+            return materiasFiltradas;
+        }
+
+
+
+        private void ActualizarListBoxMaterias(List<Materia> materiasFiltradas)
+        {
+            lstMaterias.Items.Clear();
+
+            foreach (var materia in materiasFiltradas)
+            {
+                lstMaterias.Items.Add(materia.Nombre);
+            }
+        }
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
             LimpiarCampos();
@@ -180,7 +242,8 @@ namespace WindowsFormsApp1
             txtNombre.Clear();
             txtComision.Clear();
             txtDia.Clear();
-            txtHorario.Clear();
+            dateTimePickerHrInicio.Value = DateTime.Now;
+            dateTimePickerHrFin.Value = DateTime.Now;
             txtProfesor.Clear();
             txtObservaciones.Clear();
             txtCantidadVacantes.Clear();
@@ -197,7 +260,8 @@ namespace WindowsFormsApp1
             txtNombre.Clear();
             txtComision.Clear();
             txtDia.Clear();
-            txtHorario.Clear();
+            dateTimePickerHrInicio.Value = DateTime.Now;
+            dateTimePickerHrFin.Value = DateTime.Now;
             txtProfesor.Clear();
             txtObservaciones.Clear();
             txtCantidadVacantes.Clear();
@@ -212,7 +276,8 @@ namespace WindowsFormsApp1
             txtNombre.Text = "Nombre";
             txtComision.Text = "Comisión";
             txtDia.Text = "Día";
-            txtHorario.Text = "Horario";
+            dateTimePickerHrInicio.Value = DateTime.Now;
+            dateTimePickerHrFin.Value = DateTime.Now;
             txtProfesor.Text = "Profesor";
             txtObservaciones.Text = "Observaciones";
             txtCantidadVacantes.Text = "Cantidad de Vacantes";
@@ -261,15 +326,16 @@ namespace WindowsFormsApp1
                     string nombre = worksheet.Cells[fila, 1].Value.ToString();
                     int comision = Convert.ToInt32(worksheet.Cells[fila, 2].Value);
                     string dia = worksheet.Cells[fila, 3].Value.ToString();
-                    string horario = worksheet.Cells[fila, 4].Value.ToString();
-                    string profesor = worksheet.Cells[fila, 5].Value.ToString();
-                    int cantidadVacantes = Convert.ToInt32(worksheet.Cells[fila, 6].Value);
-                    string observaciones = worksheet.Cells[fila, 7].Value.ToString();
+                    DateTime horarioinicio = Convert.ToDateTime(worksheet.Cells[fila, 4].Value);
+                    DateTime horariofin = Convert.ToDateTime(worksheet.Cells[fila, 5].Value);
+                    string profesor = worksheet.Cells[fila, 6].Value.ToString();
+                    int cantidadVacantes = Convert.ToInt32(worksheet.Cells[fila, 7].Value);
+                    string observaciones = worksheet.Cells[fila, 8].Value.ToString();
 
                     // Crea un nuevo objeto Materia y agrégalo a la lista
-                    materias.Add(new Materia(nombre, comision, dia, horario, profesor, observaciones, cantidadVacantes));
 
                     fila++;
+                    materias.Add(new Materia(nombre, comision, dia, horarioinicio, horariofin, profesor, observaciones, cantidadVacantes));
                 }
             }
 
@@ -282,18 +348,20 @@ namespace WindowsFormsApp1
         public string Nombre { get; set; }
         public int Comision { get; set; }
         public string Dia { get; set; }
-        public string Horario { get; set; }
+        public DateTime HorarioInicio { get; set; }
+        public DateTime HorarioFin { get; set; }
         public string Profesor { get; set; }
         public string Observaciones { get; set; }
         public int CantidadVacantes { get; set; }
         public string PreferenciaObservacion { get; set; }
 
-        public Materia(string nombre, int comision, string dia, string horario, string profesor, string observaciones, int cantidadVacantes)
+        public Materia(string nombre, int comision, string dia, DateTime horarioInicio, DateTime horarioFin, string profesor, string observaciones, int cantidadVacantes)
         {
             Nombre = nombre;
             Comision = comision;
             Dia = dia;
-            Horario = horario;
+            HorarioInicio = horarioInicio;
+            HorarioFin = horarioFin;
             Profesor = profesor;
             Observaciones = observaciones;
             CantidadVacantes = cantidadVacantes;
@@ -301,7 +369,7 @@ namespace WindowsFormsApp1
 
         public override string ToString()
         {
-            return $"Materia: {Nombre}\nComisión: {Comision}\nDía: {Dia}\nHorario: {Horario}\nProfesor: {Profesor}\nObservaciones: {Observaciones}\nCantidad de vacantes: {CantidadVacantes}";
+            return $"Materia: {Nombre}\nComisión: {Comision}\nDía: {Dia}\nHorarioInicio: {HorarioInicio}\nHorarioFin: {HorarioFin}\nProfesor: {Profesor}\nObservaciones: {Observaciones}\nCantidad de vacantes: {CantidadVacantes}";
         }
 
 

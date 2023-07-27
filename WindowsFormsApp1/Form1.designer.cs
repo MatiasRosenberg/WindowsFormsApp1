@@ -46,6 +46,8 @@
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.btnLimpiartodo = new System.Windows.Forms.Button();
             this.btnexcel = new System.Windows.Forms.Button();
+            this.dateTimePickerHrInicio = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePickerHrFin = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // txtObservacionPreferencia
@@ -129,7 +131,7 @@
             // txtDia
             // 
             this.txtDia.BackColor = System.Drawing.Color.LightCoral;
-            this.txtDia.Location = new System.Drawing.Point(11, 172);
+            this.txtDia.Location = new System.Drawing.Point(10, 156);
             this.txtDia.Name = "txtDia";
             this.txtDia.Size = new System.Drawing.Size(160, 20);
             this.txtDia.TabIndex = 5;
@@ -270,12 +272,32 @@
             this.btnexcel.UseVisualStyleBackColor = false;
             this.btnexcel.Click += new System.EventHandler(this.btnexcel_Click);
             // 
+            // dateTimePickerHrInicio
+            // 
+            this.dateTimePickerHrInicio.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePickerHrInicio.Location = new System.Drawing.Point(13, 214);
+            this.dateTimePickerHrInicio.Name = "dateTimePickerHrInicio";
+            this.dateTimePickerHrInicio.ShowUpDown = true;
+            this.dateTimePickerHrInicio.Size = new System.Drawing.Size(74, 20);
+            this.dateTimePickerHrInicio.TabIndex = 20;
+            // 
+            // dateTimePickerHrFin
+            // 
+            this.dateTimePickerHrFin.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePickerHrFin.Location = new System.Drawing.Point(97, 214);
+            this.dateTimePickerHrFin.Name = "dateTimePickerHrFin";
+            this.dateTimePickerHrFin.ShowUpDown = true;
+            this.dateTimePickerHrFin.Size = new System.Drawing.Size(76, 20);
+            this.dateTimePickerHrFin.TabIndex = 21;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(1370, 662);
+            this.Controls.Add(this.dateTimePickerHrFin);
+            this.Controls.Add(this.dateTimePickerHrInicio);
             this.Controls.Add(this.btnexcel);
             this.Controls.Add(this.btnLimpiartodo);
             this.Controls.Add(this.btnLimpiar);
@@ -321,6 +343,8 @@
         private System.Windows.Forms.Button btnLimpiartodo;
         private System.Windows.Forms.Button btnexcel;
         public System.Windows.Forms.ListBox lstMaterias;
+        private System.Windows.Forms.DateTimePicker dateTimePickerHrInicio;
+        private System.Windows.Forms.DateTimePicker dateTimePickerHrFin;
     }
 }
 
