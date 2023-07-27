@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace WindowsFormsApp1
 
@@ -183,6 +184,7 @@ namespace WindowsFormsApp1
             txtProfesor.Clear();
             txtObservaciones.Clear();
             txtCantidadVacantes.Clear();
+            NombresalBorrar();
         }
 
         private void btnLimpiartodo_Click(object sender, EventArgs e)
@@ -202,26 +204,110 @@ namespace WindowsFormsApp1
             lstMaterias.Items.Clear();
             lstCombinaciones.Items.Clear();
             materias.Clear();
+            NombresalBorrar();
         }
 
-        private void cboFranjaHoraria_SelectedIndexChanged(object sender, EventArgs e)
+        public void NombresalBorrar()
         {
-
+            txtNombre.Text = "Nombre";
+            txtComision.Text = "Comisión";
+            txtDia.Text = "Día";
+            txtHorario.Text = "Horario";
+            txtProfesor.Text = "Profesor";
+            txtObservaciones.Text = "Observaciones";
+            txtCantidadVacantes.Text = "Cantidad de Vacantes";
+            txtObservacionPreferencia.Text = "Filtrar Observación";
+            lstMaterias.Text = "Materias";
+            lstCombinaciones.Text = "Combinaciones";            
         }
 
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        private void btnexcel_Click(object sender, EventArgs e)
         {
+            // Mostrar el cuadro de diálogo para seleccionar un archivo de Excel.
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Archivos de Excel|*.xls;*.xlsx|Todos los archivos|*.*";
 
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFileName = openFileDialog.FileName;
+
+                    // Llamar al método para importar los datos y mostrarlos en el ListBox.
+                    ImportExcelDataToListBox(selectedFileName);
+                }
+            }
         }
 
-        private void lstMaterias_SelectedIndexChanged(object sender, EventArgs e)
+        private void ImportExcelDataToListBox(string filePath)
         {
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workbook = null;
+            Excel.Worksheet worksheet = null;
 
-        }
+            try
+            {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                Encoding utf8Encoding = Encoding.GetEncoding("UTF-8");
 
-        private void txtComision_TextChanged(object sender, EventArgs e)
-        {
+                workbook = excelApp.Workbooks.Open(filePath);
+                worksheet = workbook.Sheets[1]; // Asumimos que los datos están en la primera hoja.
 
+                int rowCount = worksheet.UsedRange.Rows.Count;
+                int columnCount = worksheet.UsedRange.Columns.Count;
+
+                lstMaterias.Items.Clear();
+
+                // Lista para almacenar las instancias de Materia.
+                List<Materia> materiasList = new List<Materia>();
+
+                // Iterar a través de las filas y crear una instancia de Materia para cada una.
+                for (int i = 2; i <= rowCount; i++) // Comenzamos desde la fila 2 para omitir la cabecera.
+                {
+                    // Utilizamos el método GetString para leer los datos con la codificación correcta (UTF-8).
+                    string nombre = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 0].Value)));
+                    int comision = Convert.ToInt32(worksheet.Cells[i, 1].Value);
+                    string dia = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 2].Value)));
+                    string horario = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 3].Value)));
+                    string profesor = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 4].Value)));
+                    string observaciones = utf8Encoding.GetString(Encoding.Default.GetBytes(Convert.ToString(worksheet.Cells[i, 5].Value)));
+                    int cantidadVacantes = Convert.ToInt32(worksheet.Cells[i, 6].Value);
+
+                    Materia materia = new Materia(nombre, comision, dia, horario, profesor, observaciones, cantidadVacantes);
+                    materiasList.Add(materia);
+                }
+
+                // Agregar las instancias de Materia al ListBox.
+                foreach (Materia materia in materiasList)
+                {
+                    lstMaterias.Items.Add(materia);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al importar los datos de Excel: " + ex.Message);
+            }
+            finally
+            {
+                // Cerrar y liberar los recursos.
+                workbook?.Close();
+                excelApp?.Quit();
+
+                if (worksheet != null)
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject(worksheet);
+
+                if (workbook != null)
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+
+                if (excelApp != null)
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
+                worksheet = null;
+                workbook = null;
+                excelApp = null;
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
         }
     }
 

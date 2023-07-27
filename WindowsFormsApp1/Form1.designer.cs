@@ -45,6 +45,7 @@
             this.txtNombre = new System.Windows.Forms.TextBox();
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.btnLimpiartodo = new System.Windows.Forms.Button();
+            this.btnexcel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtObservacionPreferencia
@@ -81,7 +82,6 @@
             this.lstMaterias.Name = "lstMaterias";
             this.lstMaterias.Size = new System.Drawing.Size(968, 277);
             this.lstMaterias.TabIndex = 7;
-            this.lstMaterias.SelectedIndexChanged += new System.EventHandler(this.lstMaterias_SelectedIndexChanged);
             // 
             // txtCantidadVacantes
             // 
@@ -112,18 +112,17 @@
             this.txtComision.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.txtComision.BackColor = System.Drawing.Color.LightCoral;
-            this.txtComision.Location = new System.Drawing.Point(10, 187);
+            this.txtComision.Location = new System.Drawing.Point(13, 98);
             this.txtComision.Name = "txtComision";
             this.txtComision.Size = new System.Drawing.Size(160, 20);
             this.txtComision.TabIndex = 6;
             this.txtComision.Text = "Comision";
             this.txtComision.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtComision.TextChanged += new System.EventHandler(this.txtComision_TextChanged);
             // 
             // txtDia
             // 
             this.txtDia.BackColor = System.Drawing.Color.LightCoral;
-            this.txtDia.Location = new System.Drawing.Point(12, 114);
+            this.txtDia.Location = new System.Drawing.Point(11, 172);
             this.txtDia.Name = "txtDia";
             this.txtDia.Size = new System.Drawing.Size(160, 20);
             this.txtDia.TabIndex = 5;
@@ -183,7 +182,7 @@
             // 
             this.btnFiltrar.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btnFiltrar.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.btnFiltrar.Location = new System.Drawing.Point(306, 124);
+            this.btnFiltrar.Location = new System.Drawing.Point(306, 114);
             this.btnFiltrar.Name = "btnFiltrar";
             this.btnFiltrar.Size = new System.Drawing.Size(136, 23);
             this.btnFiltrar.TabIndex = 11;
@@ -232,7 +231,7 @@
             // 
             this.btnLimpiar.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btnLimpiar.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnLimpiar.Location = new System.Drawing.Point(306, 184);
+            this.btnLimpiar.Location = new System.Drawing.Point(306, 195);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(136, 23);
             this.btnLimpiar.TabIndex = 17;
@@ -244,7 +243,7 @@
             // 
             this.btnLimpiartodo.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btnLimpiartodo.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnLimpiartodo.Location = new System.Drawing.Point(306, 249);
+            this.btnLimpiartodo.Location = new System.Drawing.Point(306, 236);
             this.btnLimpiartodo.Name = "btnLimpiartodo";
             this.btnLimpiartodo.Size = new System.Drawing.Size(136, 23);
             this.btnLimpiartodo.TabIndex = 18;
@@ -252,12 +251,25 @@
             this.btnLimpiartodo.UseVisualStyleBackColor = false;
             this.btnLimpiartodo.Click += new System.EventHandler(this.btnLimpiartodo_Click);
             // 
+            // btnexcel
+            // 
+            this.btnexcel.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.btnexcel.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.btnexcel.Location = new System.Drawing.Point(306, 153);
+            this.btnexcel.Name = "btnexcel";
+            this.btnexcel.Size = new System.Drawing.Size(136, 23);
+            this.btnexcel.TabIndex = 19;
+            this.btnexcel.Text = "Excel";
+            this.btnexcel.UseVisualStyleBackColor = false;
+            this.btnexcel.Click += new System.EventHandler(this.btnexcel_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(1491, 662);
+            this.Controls.Add(this.btnexcel);
             this.Controls.Add(this.btnLimpiartodo);
             this.Controls.Add(this.btnLimpiar);
             this.Controls.Add(this.lstCombinaciones);
@@ -301,6 +313,7 @@
         private System.Windows.Forms.TextBox txtNombre;
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnLimpiartodo;
+        private System.Windows.Forms.Button btnexcel;
     }
 }
 
